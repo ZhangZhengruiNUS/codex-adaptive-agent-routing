@@ -1,0 +1,9 @@
+# Portable subset only. The installer merges these values into an existing
+# ~/.codex/config.toml instead of replacing unrelated settings.
+model = "gpt-5.6-terra"
+model_reasoning_effort = "high"
+service_tier = "default"
+
+[agents]
+max_threads = 4
+max_depth = 1
