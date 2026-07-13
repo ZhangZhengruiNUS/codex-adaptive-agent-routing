@@ -50,6 +50,7 @@ Set-ExecutionPolicy -Scope Process Bypass
 - 把路由规则写入 `~/.codex/AGENTS.md` 的受管区块，不删除已有规则；
 - 安装四个 `~/.codex/agents/*.toml` 自定义代理；
 - 将 `Terra/high` 与 `[agents]` 限制合并进现有 `config.toml`；
+- 合并用于显式自定义代理路由元数据的实验性 `multi_agent_v2` 兼容设置；
 - 保留已有 MCP、插件、项目授权和其他个人配置；
 - 在 `~/.codex/backups/` 下生成带恢复清单的备份。
 
@@ -71,6 +72,22 @@ Set-ExecutionPolicy -Scope Process Bypass
 .\scripts\verify.ps1
 ```
 
+## 验证自定义代理路由
+
+仓库包含下方兼容设置，是因为它已在 Codex `0.144.2` 的全新 App 任务中通过实测：最小
+`fast_reader` 子代理的会话记录使用了配置的 `gpt-5.6-luna`，而非继承父任务模型。
+
+```toml
+[features.multi_agent_v2]
+hide_spawn_agent_metadata = false
+tool_namespace = "agents"
+```
+
+这是一项实验性兼容设置，不是官方已文档化的稳定预设。安装后请重启 Codex App，**新建**任务，
+并请求一次最小 `fast_reader` 委派；确认生成的子代理会话记录包含
+`"model":"gpt-5.6-luna"`，再将它用于成本敏感的路由。如果后续 Codex 版本提供了
+正式的等价设置，应优先采用正式设置。
+
 ## 恢复安装前状态
 
 安装命令会输出备份目录。使用对应目录恢复：
@@ -85,7 +102,7 @@ Set-ExecutionPolicy -Scope Process Bypass
 
 1. 将 `templates/AGENTS.md` 内容加入 `~/.codex/AGENTS.md`。
 2. 将 `agents/*.toml` 复制到 `~/.codex/agents/`。
-3. 参考 `config.example.toml` 合并模型与 `[agents]` 配置。
+3. 参考 `config.example.toml` 合并模型、`[agents]` 与 `multi_agent_v2` 配置。
 4. 重启 Codex App，并新建任务。
 
 ## 行为边界
@@ -94,6 +111,8 @@ Set-ExecutionPolicy -Scope Process Bypass
 - 是否委派仍由主代理结合任务和 `AGENTS.md` 判断，因此这是基于模型判断的
   自适应路由，不是完全确定性的程序路由器。
 - 子代理会独立消耗模型与工具 token；小任务不委派通常更省。
+- `multi_agent_v2` 是兼容层；其行为可能随 Codex 版本改变。升级后请在新建任务中核验
+  新产生子代理记录的实际模型。
 - `explorer` 和 `worker` 与 Codex 内置角色同名，自定义定义会优先。若项目已有
   同名自定义代理，建议重命名本模板中的 `name` 并同步修改路由规则。
 - 项目级 `.codex/config.toml`、`.codex/agents/` 和更近的 `AGENTS.md` 仍可提供

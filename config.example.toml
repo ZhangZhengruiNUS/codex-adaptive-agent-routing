@@ -4,6 +4,12 @@ model = "gpt-5.6-terra"
 model_reasoning_effort = "high"
 service_tier = "default"
 
+[features.multi_agent_v2]
+# Compatibility setting for local Codex clients that need explicit custom-agent
+# routing metadata. See the README before enabling it in a shared environment.
+hide_spawn_agent_metadata = false
+tool_namespace = "agents"
+
 [agents]
 max_threads = 6
 max_depth = 1

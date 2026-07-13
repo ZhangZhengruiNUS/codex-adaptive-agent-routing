@@ -65,6 +65,19 @@ function Merge-CodexConfig {
     } else {
         $merged = $merged.TrimEnd() + "`r`n`r`n[agents]`r`nmax_threads = 6`r`nmax_depth = 1`r`n"
     }
+
+    $multiAgentPattern = '(?ms)^[ \t]*\[features\.multi_agent_v2\][ \t]*(?:\r?\n|$)(?<body>.*?)(?=^[ \t]*\[|\z)'
+    $multiAgentMatch = [regex]::Match($merged, $multiAgentPattern)
+    if ($multiAgentMatch.Success) {
+        $body = $multiAgentMatch.Groups['body'].Value
+        $body = Set-TomlKey $body 'hide_spawn_agent_metadata' 'false'
+        $body = Set-TomlKey $body 'tool_namespace' '"agents"'
+        $newSection = "[features.multi_agent_v2]`r`n" + $body.Trim() + "`r`n`r`n"
+        $merged = $merged.Substring(0, $multiAgentMatch.Index) + $newSection +
+            $merged.Substring($multiAgentMatch.Index + $multiAgentMatch.Length)
+    } else {
+        $merged = $merged.TrimEnd() + "`r`n`r`n[features.multi_agent_v2]`r`nhide_spawn_agent_metadata = false`r`ntool_namespace = `"agents`"`r`n"
+    }
     return $merged
 }
 

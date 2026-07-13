@@ -23,6 +23,9 @@ if ($errors.Count -eq 0) {
     foreach ($pattern in @(
         '(?m)^model\s*=\s*"gpt-5\.6-terra"\s*$',
         '(?m)^model_reasoning_effort\s*=\s*"high"\s*$',
+        '(?m)^\[features\.multi_agent_v2\]\s*$',
+        '(?m)^hide_spawn_agent_metadata\s*=\s*false\s*$',
+        '(?m)^tool_namespace\s*=\s*"agents"\s*$',
         '(?m)^max_threads\s*=\s*6\s*$',
         '(?m)^max_depth\s*=\s*1\s*$'
     )) {

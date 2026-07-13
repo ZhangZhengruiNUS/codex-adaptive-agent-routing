@@ -58,6 +58,8 @@ The installer:
 - installs four custom agents under `~/.codex/agents/`;
 - merges the `Terra/high` defaults and `[agents]` limits into the existing
   `config.toml`;
+- merges the experimental `multi_agent_v2` compatibility settings required for
+  explicit custom-agent routing metadata;
 - preserves existing MCP servers, plugins, project trust entries, and other
   personal settings;
 - creates a restore manifest and backup under `~/.codex/backups/`.
@@ -82,6 +84,25 @@ with:
 .\scripts\verify.ps1
 ```
 
+## Verify custom-agent routing
+
+The compatibility settings below are included because they were verified in a
+fresh Codex App task on Codex `0.144.2`: a minimal `fast_reader` subagent was
+recorded with the configured `gpt-5.6-luna` model instead of inheriting the
+parent model.
+
+```toml
+[features.multi_agent_v2]
+hide_spawn_agent_metadata = false
+tool_namespace = "agents"
+```
+
+This is an experimental compatibility setting, not a documented stable preset.
+After installation, restart Codex App, create a **new** task, and request a
+minimal `fast_reader` delegation. Confirm the resulting subagent session record
+contains `"model":"gpt-5.6-luna"` before relying on cost-sensitive routing.
+If a later Codex release exposes a documented equivalent, prefer that setting.
+
 ## Restore the previous configuration
 
 The installer prints the backup directory it created. Restore from that
@@ -97,8 +118,8 @@ Restart Codex App and start a new task after restoring.
 
 1. Add the contents of `templates/AGENTS.md` to `~/.codex/AGENTS.md`.
 2. Copy `agents/*.toml` to `~/.codex/agents/`.
-3. Merge the model and `[agents]` settings from `config.example.toml` into your
-   configuration.
+3. Merge the model, `[agents]`, and `multi_agent_v2` settings from
+   `config.example.toml` into your configuration.
 4. Restart Codex App and start a new task.
 
 ## Behavior and limitations
@@ -110,6 +131,9 @@ Restart Codex App and start a new task after restoring.
   fully deterministic router.
 - Each subagent consumes its own model and tool tokens. Keeping small tasks in
   the main task is usually cheaper.
+- `multi_agent_v2` is a compatibility layer. Its behavior can change between
+  Codex releases, so verify the actual model recorded for a newly spawned agent
+  after upgrades.
 - The custom `explorer` and `worker` definitions have the same names as built-in
   Codex roles and therefore take precedence. If a project already defines
   agents with these names, rename the template agents and update the routing
