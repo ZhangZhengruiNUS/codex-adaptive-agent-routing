@@ -16,9 +16,9 @@ flowchart TD
     M["主代理：Terra / high"] --> D{"是否值得委派？"}
     D -->|"短任务、小修改"| M
     D -->|"确定性读取与整理"| F["fast_reader：Luna / low"]
-    D -->|"代码库探索与日志分析"| E["explorer：Terra / low"]
+    D -->|"代码库探索与日志分析"| E["explorer：Terra / medium"]
     D -->|"边界明确的多步实现"| W["worker：Terra / medium"]
-    D -->|"架构或高风险审查"| R["deep_reviewer：Sol / high"]
+    D -->|"架构或高风险审查"| R["deep_reviewer：Sol / xhigh"]
     F --> M
     E --> M
     W --> M
@@ -29,12 +29,12 @@ flowchart TD
 | --- | --- | --- | --- |
 | 主代理 | 需求理解、拆分、整合、最终验收 | Terra / high | 当前任务权限 |
 | `fast_reader` | 大量但确定性的提取、分类、比较、摘要 | Luna / low | 只读 |
-| `explorer` | 多文件探索、调用链、日志与证据收集 | Terra / low | 只读 |
+| `explorer` | 多文件探索、调用链、日志与证据收集 | Terra / medium | 只读 |
 | `worker` | 边界明确的多步骤实现 | Terra / medium | 继承父任务 |
-| `deep_reviewer` | 架构、安全、权限、迁移、并发等高风险审查 | Sol / high | 只读 |
+| `deep_reviewer` | 架构、安全、权限、迁移、并发等高风险审查 | Sol / xhigh | 只读 |
 
-默认最多两个子代理；只有真正独立的只读任务才允许扩展到四个。委派深度为
-一层，同一个工作树同时只允许一个可写代理。
+路由策略通常最多使用两个子代理；只有真正独立的只读任务才允许扩展到四个。
+线程硬上限为六个，委派深度为一层，同一个工作树同时只允许一个可写代理。
 
 ## Windows 快速安装
 

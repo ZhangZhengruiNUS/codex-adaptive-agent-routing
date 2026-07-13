@@ -23,10 +23,27 @@ if ($errors.Count -eq 0) {
     foreach ($pattern in @(
         '(?m)^model\s*=\s*"gpt-5\.6-terra"\s*$',
         '(?m)^model_reasoning_effort\s*=\s*"high"\s*$',
-        '(?m)^max_threads\s*=\s*4\s*$',
+        '(?m)^max_threads\s*=\s*6\s*$',
         '(?m)^max_depth\s*=\s*1\s*$'
     )) {
         if ($config -notmatch $pattern) { $errors += "Config pattern not found: $pattern" }
+    }
+
+    $agentExpectations = @{
+        'fast-reader.toml' = @('gpt-5\.6-luna', 'low')
+        'explorer.toml' = @('gpt-5\.6-terra', 'medium')
+        'worker.toml' = @('gpt-5\.6-terra', 'medium')
+        'deep-reviewer.toml' = @('gpt-5\.6-sol', 'xhigh')
+    }
+    foreach ($entry in $agentExpectations.GetEnumerator()) {
+        $agent = Get-Content -Raw -LiteralPath (Join-Path $CodexHome "agents\$($entry.Key)")
+        $modelPattern = '(?m)^model\s*=\s*"' + $entry.Value[0] + '"\s*$'
+        $effortPattern = '(?m)^model_reasoning_effort\s*=\s*"' + $entry.Value[1] + '"\s*$'
+        foreach ($pattern in @($modelPattern, $effortPattern)) {
+            if ($agent -notmatch $pattern) {
+                $errors += "Agent pattern not found in $($entry.Key): $pattern"
+            }
+        }
     }
 }
 

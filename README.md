@@ -20,9 +20,9 @@ flowchart TD
     M["Main agent: Terra / high"] --> D{"Is delegation worthwhile?"}
     D -->|"Short task or small edit"| M
     D -->|"Deterministic reading and synthesis"| F["fast_reader: Luna / low"]
-    D -->|"Repository exploration and log analysis"| E["explorer: Terra / low"]
+    D -->|"Repository exploration and log analysis"| E["explorer: Terra / medium"]
     D -->|"Bounded multi-step implementation"| W["worker: Terra / medium"]
-    D -->|"Architecture or high-risk review"| R["deep_reviewer: Sol / high"]
+    D -->|"Architecture or high-risk review"| R["deep_reviewer: Sol / xhigh"]
     F --> M
     E --> M
     W --> M
@@ -33,13 +33,14 @@ flowchart TD
 | --- | --- | --- | --- |
 | Main agent | Understand requirements, decompose work, integrate results, and perform final validation | Terra / high | Current task permissions |
 | `fast_reader` | High-volume deterministic extraction, classification, comparison, and summarization | Luna / low | Read-only |
-| `explorer` | Multi-file exploration, execution tracing, log analysis, and evidence gathering | Terra / low | Read-only |
+| `explorer` | Multi-file exploration, execution tracing, log analysis, and evidence gathering | Terra / medium | Read-only |
 | `worker` | Bounded multi-step implementation with clear acceptance criteria | Terra / medium | Inherits the parent task |
-| `deep_reviewer` | High-risk review involving architecture, security, permissions, migrations, or concurrency | Sol / high | Read-only |
+| `deep_reviewer` | High-risk review involving architecture, security, permissions, migrations, or concurrency | Sol / xhigh | Read-only |
 
-The default limit is two subagents. Up to four are allowed only for genuinely
-independent read-heavy work. Delegation depth is limited to one level, and only
-one write-capable agent may modify a working tree at a time.
+The routing policy normally uses at most two subagents and allows up to four only
+for genuinely independent read-heavy work. The hard thread cap is six, delegation
+depth is limited to one level, and only one write-capable agent may modify a
+working tree at a time.
 
 ## Windows quick install
 

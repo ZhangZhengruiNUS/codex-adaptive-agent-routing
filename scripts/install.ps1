@@ -57,13 +57,13 @@ function Merge-CodexConfig {
     $agentsMatch = [regex]::Match($merged, $agentsPattern)
     if ($agentsMatch.Success) {
         $body = $agentsMatch.Groups['body'].Value
-        $body = Set-TomlKey $body 'max_threads' '4'
+        $body = Set-TomlKey $body 'max_threads' '6'
         $body = Set-TomlKey $body 'max_depth' '1'
         $newSection = "[agents]`r`n" + $body.Trim() + "`r`n`r`n"
         $merged = $merged.Substring(0, $agentsMatch.Index) + $newSection +
             $merged.Substring($agentsMatch.Index + $agentsMatch.Length)
     } else {
-        $merged = $merged.TrimEnd() + "`r`n`r`n[agents]`r`nmax_threads = 4`r`nmax_depth = 1`r`n"
+        $merged = $merged.TrimEnd() + "`r`n`r`n[agents]`r`nmax_threads = 6`r`nmax_depth = 1`r`n"
     }
     return $merged
 }
