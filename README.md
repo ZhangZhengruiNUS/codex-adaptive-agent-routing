@@ -4,9 +4,9 @@ English | [简体中文](./README.zh-CN.md)
 
 An opinionated multi-model subagent routing template for **Codex App**.
 `Terra/high` remains responsible for the main task, while bounded independent
-work is delegated to models and reasoning levels that better match the job. The
-goal is to preserve completion quality while reducing unnecessary cost and
-keeping noisy intermediate work out of the main context.
+work is proactively delegated to models and reasoning levels that better match
+the job. The goal is to preserve completion quality while reducing unnecessary
+cost and keeping noisy intermediate work out of the main context.
 
 > This is a community configuration template, not an official OpenAI preset.
 > Model names and availability may vary by account, workspace, and product
@@ -31,7 +31,7 @@ flowchart TD
 
 | Agent | Default responsibility | Model / reasoning | Access |
 | --- | --- | --- | --- |
-| Main agent | Understand requirements, decompose work, integrate results, and perform final validation | Terra / high | Current task permissions |
+| Main agent | Understand requirements, identify independent lanes, integrate results, and perform final validation | Terra / high | Current task permissions |
 | `fast_reader` | High-volume deterministic extraction, classification, comparison, and summarization | Luna / low | Read-only |
 | `explorer` | Multi-file exploration, execution tracing, log analysis, and evidence gathering | Terra / medium | Read-only |
 | `worker` | Bounded multi-step implementation with clear acceptance criteria | Terra / medium | Inherits the parent task |
@@ -41,6 +41,12 @@ The routing policy normally uses at most two subagents and allows up to four onl
 for genuinely independent read-heavy work. The hard thread cap is six, delegation
 depth is limited to one level, and only one write-capable agent may modify a
 working tree at a time.
+
+For non-trivial research, diagnosis, multi-file exploration, design analysis,
+or feature work, the template first identifies independent lanes. When at least
+two read-only lanes can proceed without blocking the critical path, it requires
+two to four focused subagents before synthesis. Small, tightly coupled work
+stays in the main task.
 
 ## Windows quick install
 
@@ -126,9 +132,10 @@ Restart Codex App and start a new task after restoring.
 
 - `max_threads` and `max_depth` constrain concurrency and nesting; they do not
   trigger delegation by themselves.
-- The main agent still interprets the task and the applicable `AGENTS.md` before
-  deciding whether to delegate. This is adaptive model-driven routing, not a
-  fully deterministic router.
+- The template explicitly authorizes bounded delegation and requires parallel
+  read-only work when its delegation gate is met. The main agent still judges
+  whether lanes are independent, so this is adaptive model-driven routing, not
+  a fully deterministic scheduler.
 - Each subagent consumes its own model and tool tokens. Keeping small tasks in
   the main task is usually cheaper.
 - `multi_agent_v2` is a compatibility layer. Its behavior can change between

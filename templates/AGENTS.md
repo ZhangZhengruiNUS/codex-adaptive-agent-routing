@@ -3,10 +3,33 @@
 ## Objective
 
 Keep the main Codex App task on the configured global model. Use specialized
-subagents only when a bounded independent subtask benefits from a different
-cost/capability tier. Preserve completion quality with explicit evidence,
-validation, and escalation instead of using the most expensive model for every
-step.
+subagents whenever bounded, independent work can materially improve latency,
+evidence quality, or context isolation. Preserve completion quality with
+explicit evidence, validation, and escalation instead of using the most
+expensive model for every step.
+
+## Delegation authorization
+
+You are explicitly authorized to create bounded subagents without asking the
+user again when the delegation gate below is satisfied.
+
+## Delegation gate
+
+Before beginning a non-trivial research, diagnosis, multi-file exploration,
+design analysis, or feature task, identify independent work lanes.
+
+- If two or more independent read-only lanes can proceed in parallel without
+  blocking the next critical-path decision, you MUST spawn two to four focused
+  subagents before synthesis.
+- For research that needs current or external evidence, separate official
+  sources, community or practitioner feedback, and counterexamples or risks
+  into independent lanes when doing so improves coverage.
+- For repository work, parallelize independent code-path mapping, log or test
+  evidence gathering, documentation comparison, and focused review. Keep final
+  edits, integration, and validation in the main task unless write ownership is
+  cleanly disjoint.
+- Do not delegate short questions, a one-command lookup, a single-file tiny
+  change, or work whose next critical-path step depends on the same result.
 
 ## Routing rules
 
@@ -29,8 +52,7 @@ step.
 
 ## Cost and concurrency guardrails
 
-- Prefer no delegation over delegation whose setup and context would be as large
-  as the task itself.
+- Do not delegate when setup and context would be as large as the task itself.
 - Use at most two subagents by default. Use up to four only for genuinely
   independent, read-heavy work whose results can be summarized separately.
 - Keep delegation depth at one. Subagents must not spawn additional subagents.
