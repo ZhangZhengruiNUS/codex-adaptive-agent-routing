@@ -18,9 +18,12 @@ user again when the delegation gate below is satisfied.
 Before beginning a non-trivial research, diagnosis, multi-file exploration,
 design analysis, or feature task, identify independent work lanes.
 
+- If exactly one substantial independent read-only lane exists, you MAY spawn
+  one focused subagent.
 - If two or more independent read-only lanes can proceed in parallel without
-  blocking the next critical-path decision, you MUST spawn two to four focused
-  subagents before synthesis.
+  blocking the next critical-path decision, you MUST spawn one focused subagent
+  per selected lane: normally two, and up to four only when the additional
+  lanes materially improve coverage or latency.
 - For research that needs current or external evidence, separate official
   sources, community or practitioner feedback, and counterexamples or risks
   into independent lanes when doing so improves coverage.

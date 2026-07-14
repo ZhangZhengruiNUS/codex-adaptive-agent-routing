@@ -43,10 +43,11 @@ depth is limited to one level, and only one write-capable agent may modify a
 working tree at a time.
 
 For non-trivial research, diagnosis, multi-file exploration, design analysis,
-or feature work, the template first identifies independent lanes. When at least
-two read-only lanes can proceed without blocking the critical path, it requires
-two to four focused subagents before synthesis. Small, tightly coupled work
-stays in the main task.
+or feature work, the template first identifies independent lanes. One substantial
+read-only lane may use one focused subagent. When two or more lanes can proceed
+without blocking the critical path, it requires one agent per selected lane:
+normally two, and up to four only when the additional lanes improve coverage or
+latency. Small, tightly coupled work stays in the main task.
 
 ## Windows quick install
 
@@ -132,10 +133,11 @@ Restart Codex App and start a new task after restoring.
 
 - `max_threads` and `max_depth` constrain concurrency and nesting; they do not
   trigger delegation by themselves.
-- The template explicitly authorizes bounded delegation and requires parallel
-  read-only work when its delegation gate is met. The main agent still judges
-  whether lanes are independent, so this is adaptive model-driven routing, not
-  a fully deterministic scheduler.
+- The template explicitly authorizes bounded delegation: one substantial
+  read-only lane may use one subagent, while the gate requires parallel work for
+  two or more selected lanes. The main agent still judges whether lanes are
+  independent, so this is adaptive model-driven routing, not a fully
+  deterministic scheduler.
 - Each subagent consumes its own model and tool tokens. Keeping small tasks in
   the main task is usually cheaper.
 - `multi_agent_v2` is a compatibility layer. Its behavior can change between
